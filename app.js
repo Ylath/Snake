@@ -2,17 +2,22 @@
 /**
  * Module dependencies.
  */
-
 var express = require('express')
   , routes = require('./routes')
   , user = require('./routes/user')
-  , http = require('http')
   , path = require('path');
 
+var fs = require('fs');
+var http = require('http');
+var https = require('https');
+var privateKey  = fs.readFileSync('private/key.pem');
+var certificate = fs.readFileSync('private/cert.pem');
+
+var credentials = {key: privateKey, cert: certificate};
 var app = express();
 
 // all environments
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || 7107);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 app.use(express.favicon());
@@ -31,6 +36,6 @@ if ('development' == app.get('env')) {
 app.get('/', routes.index);
 app.get('/users', user.list);
 
-http.createServer(app).listen(app.get('port'), function(){
+var server = https.createServer(credentials, app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
