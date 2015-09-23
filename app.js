@@ -17,7 +17,7 @@ var credentials = {key: privateKey, cert: certificate};
 var app = express();
 
 // all environments
-app.set('port', process.env.PORT || 7107);
+app.set('port', process.env.PORT || 4710);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 app.use(express.favicon());

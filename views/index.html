@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<link rel="stylesheet", href="/stylesheets/style.css" />
+<!-- Load the Paper.js library -->
+<script type="text/javascript" src="Paper/docs/assets/js/paper.js"></script>
+<!-- Define inlined PaperScript associate it with myCanvas -->
+<script type="text/paperscript" canvas="myCanvas">
+	
+var path = new Path.Circle(new Point(500, 300), 30);
+path.fillColor = 'black';
+
+var path1 = new Path.Circle(new Point(460, 260), 30);
+path1.fillColor = 'black';
+
+var rand = Point.random() * view.size;
+var vector = rand;
+var vector1 = rand;
+
+function onFrame(event) 
+{	
+	vector1 = path.position - path1.position;
+	var vec = vector.normalize(Math.abs(150));
+	var vec1 = vector1.normalize(Math.abs(150));
+	path.position += vec / 30;
+	path1.position += vec1 / 30;
+}
+
+function onMouseUp(event) 
+{
+	vector = event.point - path.position;
+	vector1 = event.point - path1.position;	
+}
+
+
+
+</script>
+</head>
+<body>
+	<canvas id="myCanvas" width=1200 height=475></canvas>
+</body>
+</html>
