@@ -20,6 +20,7 @@ path2.fillColor = 'black';
 var rand = Point.random() * view.size;
 var vector = rand;
 var myArray = [100];
+var i = 0;
 
 
 function onFrame(event) 
@@ -28,12 +29,14 @@ function onFrame(event)
 	var vec = vector.normalize(Math.abs(130));
 
 	path.position += vec / 30;	
+	path1.position = myArray[i-6];
+	path2.position = myArray[i-13];
+	i++;
 }
 
 function onMouseUp(event) 
 {
 	vector = event.point - path.position;
-	
 }
 
 
