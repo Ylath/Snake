@@ -1,0 +1,11 @@
+// -- TUTO POUR CREER UN CERTIFICAT AVEC LA CLEE POUR LA CONNEXION SECURISEE -- //
+
+1 - Télécharger OpenSSL
+2 - Copier le fichier openssl.cnf (dans public), dans le même répertoire que le .exe de openssl
+3 - Ouvrir OpenSSL
+4 - Effectuer les commandes suivantes (sous OpenSSL) :
+genrsa -out key.pem 2048
+req -new -key key.pem -out csr.pem
+req -x509 -days 365 -key key.pem -in csr.pem -out cert.pem
+5 - Déplacer les fichier "key.pem" et "cert.pem" dans le dossier private
+6 - Lancer le programme
