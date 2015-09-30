@@ -11,25 +11,29 @@
 var path = new Path.Circle(new Point(500, 300), 30);
 path.fillColor = 'black';
 
-var path1 = new Path.Circle(new Point(460, 260), 30);
+var path1 = new Path.Circle(new Point(470, 280), 30);
 path1.fillColor = 'black';
+
+var path2 = new Path.Circle(new Point(440, 260), 30);
+path2.fillColor = 'black';
 
 var rand = Point.random() * view.size;
 var vector = rand;
-var vector1 = rand;
+var myArray = [100];
+
 
 function onFrame(event) 
 {		
-	vector1 = path.position - path1.position;
+	myArray.push(path.position);
 	var vec = vector.normalize(Math.abs(130));
-	var vec1 = vector1.normalize(Math.abs(130));
+
 	path.position += vec / 30;	
-	path1.position = path.position-vector1;
 }
 
 function onMouseUp(event) 
 {
 	vector = event.point - path.position;
+	
 }
 
 
