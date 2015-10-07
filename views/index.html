@@ -11,29 +11,48 @@
 var ws = new WebSocket("wss://localhost:4710/");
 
 
+// tête
+var radius = 30;
+var path = new Path.Circle(new Point(500, 300), radius);
+path.fillColor = 'black';
+
+
+
+// connexion au serveur
 ws.onopen = function (event) 
 {
   	console.log("I'm here");
 };
 
+
+// envoi click au serveur
 function onMouseUp(event) 
 {
 	ws.send(JSON.stringify(event.position));
 }
+
 
 //Reception de message
 ws.onmessage = function (message) 
 { 
 	var msg = JSON.parse(message.data);
 
+	
 	switch(msg.type)
 	{
-		case"config":
-	
-			console.log(msg);
-			break;		
+		case "corps" :
+			// postete + poselem	
+
+		
+		case "candy" :
+			
 	}
+
 };
+
+
+
+
 
 			</script>
 	</head>

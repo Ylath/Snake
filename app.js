@@ -43,14 +43,93 @@ var server = https.createServer(credentials, app).listen(app.get('port'), functi
 
 var WebSocketServer = require('ws').Server;
 var wss = new WebSocketServer({server:server});
-var pos = 0;
+
+
+var radius = 30;
+var postete = Math.random() * 1000;
+
+var candypos = Math.random() * 1000;
+
+var rand = Math.random() * 1000;
+var vector = rand;
+var postrajet = [1000];
+var poselem = [150];
+poselem.push(radius, radius, radius);
+var j = 0;
+var i = 0;
+var increPos = 6;
+var corps = 0;
+
+function onFrame(event) 
+{		
+	// calcul seulement sur  les positions
+	if ((postete - candypos).length <= 2*radius)
+	{
+		ajout();
+	}
+	
+	postrajet.push(postete);
+	var vec = vector.normalize(Math.abs(130));
+	
+	
+	//envoyer postete au client
+	postete += vec / 30;
+
+	j = 0;
+	while (j < poselem.length) 
+	{
+		corps = poselem[j];
+		//collisions
+		if (j > 0)
+			if ((postete - corps).length <= radius)
+				Respond.end;			
+		
+		// stocké pos des éléments du serpent
+    	poselem[j] = postrajet[i - increPos];
+		increPos += 6;
+		j++;		
+	}
+	increPos = 6;
+	i++;
+	
+	//envoi json au client (position élements corps)
+	var message = { 
+			type : "corps",
+			pos : postete,
+			posqueue : poselem
+	};
+	ws.send(message);
+}
+
+function ajout()
+{
+   	poselem.push(radius);
+	candypos = Math.random() * 1000;
+	
+	// envoi position candy au client
+	var message = { 
+			type : "candy",
+			pos : poscandy
+	};
+	ws.send(message);
+}
+
+
+
 
 wss.on('connection', function connection(ws)
 {
+	// récupération du click et calcul du vecteur
 	console.log("Client connected");
 	ws.on('message', function message(event) {
 		var click = JSON.parse(event.data);
+		vector = click - posetete;
+		
 	});
+	
 });
+
+
+
 
 
