@@ -2,6 +2,7 @@
 /**
  * Module dependencies.
  */
+
 var express = require('express')
   , routes = require('./routes')
   , user = require('./routes/user')
@@ -39,3 +40,17 @@ app.get('/users', user.list);
 var server = https.createServer(credentials, app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
+
+var WebSocketServer = require('ws').Server;
+var wss = new WebSocketServer({server:server});
+var pos = 0;
+
+wss.on('connection', function connection(ws)
+{
+	console.log("Client connected");
+	ws.on('message', function message(event) {
+		var click = JSON.parse(event.data);
+	});
+});
+
+

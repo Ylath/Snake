@@ -1,0 +1,65 @@
+snake de base
+
+
+
+var radius = 30;
+var path = new Path.Circle(new Point(500, 300), radius);
+path.fillColor = 'black';
+
+var path1 = new Path.Circle(new Point(0, 0), radius);
+var path2 = new Path.Circle(new Point(0, 0), radius);
+var path3 = new Path.Circle(new Point(0, 0), radius);
+
+var candy = new Path.Circle(new Point(0, 0), radius);
+candy.fillColor = 'red';
+candy.position = Point.random() * view.size;
+
+var rand = Point.random() * view.size;
+var vector = rand;
+var pos = [1000];
+var elem = [150];
+elem.push(path1, path2, path3);
+var j = 0;
+var i = 0;
+var increPos = 6;
+var corps = 0;
+
+function onFrame(event) 
+{		
+	if ((path.position - candy.position).length <= 2*radius)
+	{
+		ajout();
+	}
+	candy.fillColor.hue += 1;
+	
+	pos.push(path.position);
+	var vec = vector.normalize(Math.abs(130));
+	path.position += vec / 30;
+
+	j = 0;
+	while (j < elem.length) 
+	{
+		corps = elem[j].position;
+		if (j > 0)
+			if ((path.position - corps).length <= radius)
+				Respond.end;			
+		
+		elem[j].fillColor = 'black';
+    	elem[j].position = pos[i - increPos];
+		increPos += 6;
+		j++;		
+	}
+	increPos = 6;
+	i++;
+}
+
+function onMouseUp(event) 
+{
+	vector = event.point - path.position;
+}
+
+function ajout()
+{
+   	elem.push(new Path.Circle(new Point(0, 0), radius));
+	candy.position = Point.random() * view.size;
+}

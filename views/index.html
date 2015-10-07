@@ -8,38 +8,32 @@
 			<!-- Define inlined PaperScript associate it with myCanvas -->
 			<script type="text/paperscript" canvas="myCanvas">
 	
-var path = new Path.Circle(new Point(500, 300), 30);
-path.fillColor = 'black';
-
-var path1 = new Path.Circle(new Point(470, 280), 30);
-path1.fillColor = 'black';
-
-var path2 = new Path.Circle(new Point(440, 260), 30);
-path2.fillColor = 'black';
-
-var rand = Point.random() * view.size;
-var vector = rand;
-var myArray = [100];
-var i = 0;
+var ws = new WebSocket("wss://localhost:4710/");
 
 
-function onFrame(event) 
-{		
-	myArray.push(path.position);
-	var vec = vector.normalize(Math.abs(130));
-
-	path.position += vec / 30;	
-	path1.position = myArray[i-6];
-	path2.position = myArray[i-13];
-	i++;
-}
+ws.onopen = function (event) 
+{
+  	console.log("I'm here");
+};
 
 function onMouseUp(event) 
 {
-	vector = event.point - path.position;
+	ws.send(JSON.stringify(event.position));
 }
 
+//Reception de message
+ws.onmessage = function (message) 
+{ 
+	var msg = JSON.parse(message.data);
 
+	switch(msg.type)
+	{
+		case"config":
+	
+			console.log(msg);
+			break;		
+	}
+};
 
 			</script>
 	</head>
