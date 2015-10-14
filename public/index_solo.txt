@@ -33,6 +33,7 @@ function onFrame(event)
 	candy.fillColor.hue += 1;
 	
 	pos.push(path.position);
+	
 	var vec = vector.normalize(Math.abs(130));
 	path.position += vec / 30;
 

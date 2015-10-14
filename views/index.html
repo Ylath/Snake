@@ -10,13 +10,9 @@
 	
 var ws = new WebSocket("wss://localhost:4710/");
 
-
-// tête
 var radius = 30;
 var path = new Path.Circle(new Point(500, 300), radius);
 path.fillColor = 'black';
-
-
 
 // connexion au serveur
 ws.onopen = function (event) 
@@ -28,7 +24,13 @@ ws.onopen = function (event)
 // envoi click au serveur
 function onMouseUp(event) 
 {
-	ws.send(JSON.stringify(event.position));
+	var pt = new Point(event.Point);
+	var message = { 
+				type : "clic",
+				posx : pt.x,
+				posy : pt.y
+		};
+		ws.send(JSON.stringify(message));
 }
 
 
@@ -40,20 +42,30 @@ ws.onmessage = function (message)
 	
 	switch(msg.type)
 	{
-		case "corps" :
-			// postete + poselem	
 
+		case "corps" :
+			path.position = msg.pos;
+			//candy.fillColor.hue += 1;
+			/*
+			var i = 0;
+
+			if (msg.posqueue.length > elem.length)
+			{
+				elem.push(new Path.Circle(new Point(0, 0), radius));
+			}
+
+
+			while(i<elem.length)
+			{
+				elem[i].position = msg.posqueue[i];
+				i++;
+			}
 		
 		case "candy" :
-			
+			candy.position = msg.pos; 		*/	
 	}
 
 };
-
-
-
-
-
 			</script>
 	</head>
 	<body>
