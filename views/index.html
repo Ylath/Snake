@@ -14,6 +14,16 @@ var radius = 30;
 var path = new Path.Circle(new Point(500, 300), radius);
 path.fillColor = 'black';
 
+var path1 = new Path.Circle(new Point(500, 200), radius);
+var path2 = new Path.Circle(new Point(500, 200), radius);
+var path3 = new Path.Circle(new Point(500, 200), radius);
+
+var candy = new Path.Circle(new Point(100, 100), radius);
+candy.fillColor = 'red';
+
+var elem = [];
+elem.push(path1, path2, path3);
+
 // connexion au serveur
 ws.onopen = function (event) 
 {
@@ -24,7 +34,7 @@ ws.onopen = function (event)
 // envoi click au serveur
 function onMouseUp(event) 
 {
-	var pt = new Point(event.Point);
+	var pt = new Point(event.point);
 	var message = { 
 				type : "clic",
 				posx : pt.x,
@@ -45,8 +55,9 @@ ws.onmessage = function (message)
 
 		case "corps" :
 			path.position = msg.pos;
-			//candy.fillColor.hue += 1;
-			/*
+			candy.position = msg.poscandy;
+			candy.fillColor.hue += 1;
+			
 			var i = 0;
 
 			if (msg.posqueue.length > elem.length)
@@ -55,20 +66,27 @@ ws.onmessage = function (message)
 			}
 
 
-			while(i<elem.length)
+			while(i<msg.posqueue.length)
 			{
-				elem[i].position = msg.posqueue[i];
+				elem[i].fillColor = 'black';
+				elem[i].position = msg.posqueue[i];			
 				i++;
 			}
 		
 		case "candy" :
-			candy.position = msg.pos; 		*/	
+			candy.position = msg.poscandy; 	
 	}
 
 };
+
+ws.onclose = function (event) {      
+  alert("Perdu (u suck), score : "+elem.length);
+};
+
+
 			</script>
 	</head>
 	<body>
-		<canvas id="myCanvas" width=1300 height=570></canvas>
+		<canvas id="myCanvas" width=1200 height=500></canvas>
 	</body>
 </html>

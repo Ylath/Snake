@@ -51,23 +51,19 @@ var model = require('./model');
 var point = model.point;
 var snake = model.snake;
 
+var candypos = new point(Math.random() * 1200, Math.random() * 500);
+var postete = new point(500, 300);
+var firstdirec = new point(Math.random() * 1200, Math.random() * 500);
+
+var poselem = [];
+poselem.push(new point(0,0), new point(0,0), new point(0,0));
+var serp = new snake(postete, poselem);
+serp.normalize(firstdirec);
 
 var radius = 30;
 
-var candypos = new point(100, 200);
-
-var candypos = new point(100, 200);
-var postete = new point(500, 300);
-var poselem = [];
-var serp = new snake(postete, poselem);
-serp.normalize(candypos);
-serp.update();
-
-
-
-
-
-var postrajet = [1000];
+var postrajetx = [1000];
+var postrajety = [1000];
 
 
 var j = 0;
@@ -93,10 +89,10 @@ wss.on('connection', function connection(ws)
 				break;
 		}		
 		
-		setInterval(onFrame, 500);
+		
 		
 	});
-	
+	setInterval(onFrame, 0.5);
 	
 	
 	function onFrame() 
@@ -105,40 +101,59 @@ wss.on('connection', function connection(ws)
 		
 		serp.update();
 		// le snake mange un candy
-		/*
-		if ((postete - candypos).length <= 2*radius)
+		
+		var x = (candypos.x - serp.tete.x);
+		var y = (candypos.y - serp.tete.y);
+		var norme = Math.sqrt((x*x)+(y*y));
+		
+		if (norme <= 2*radius)
 		{
 			ajout();
-		}*/
+		}
 		
-		//postrajet.push(postete);
+		
+		postrajetx.push(serp.tete.x);
+		postrajety.push(serp.tete.y);
+		
 
-		//j = 0;
-		/*while (j < poselem.length) 
+		j = 0;
+		while (j < serp.corps.length) 
 		{
-			corps = poselem[j];
 			//collisions
 			if (j > 0)
 			{
-				if ((postete - corps).length <= radius)
+				
+				var x = (serp.corps[j].x - serp.tete.x);
+				var y = (serp.corps[j].y - serp.tete.y);
+				var norme = Math.sqrt((x*x)+(y*y));
+				
+				if (norme <= radius)
 				{
-					console.log("boobs");
-					break;
+					ws.close();
 				}
 			}
+
 			// stocké pos des éléments du serpent
-	    	poselem[j] = postrajet[i - increPos];
+
+			serp.corps[j].x = postrajetx[i - increPos];
+			serp.corps[j].y = postrajety[i - increPos];
+						
+
 			increPos += 6;
 			j++;		
 		}
+	
 		increPos = 6;
-		i++;*/
+		i++;
+		
+			
 		
 		//envoi json au client (position élements corps)
 		var message = { 
 				type : "corps",
-				pos : postete
-				//posqueue : poselem
+				pos : serp.tete,
+				posqueue : serp.corps,
+				poscandy : candypos
 		};
 		ws.send(JSON.stringify(message));
 	}
@@ -148,12 +163,15 @@ wss.on('connection', function connection(ws)
 	
 	function ajout()
 	{
-	   	poselem.push(radius);
-		
+	   	serp.corps.push(new point(0,0));
+
+	   	candypos.x = Math.random() * 1200;
+	   	candypos.y = Math.random() * 500;
+
 		// envoi position candy au client
 		var message = { 
 				type : "candy",
-				pos : candypos
+				poscandy : candypos
 		};
 		ws.send(JSON.stringify(message));
 	}
