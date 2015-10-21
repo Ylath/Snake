@@ -11,18 +11,21 @@
 var ws = new WebSocket("wss://localhost:4710/");
 
 var radius = 30;
-var path = new Path.Circle(new Point(500, 300), radius);
+var path = new Path.Circle(new Point(0, 0), radius);
 path.fillColor = 'black';
 
-var path1 = new Path.Circle(new Point(500, 200), radius);
-var path2 = new Path.Circle(new Point(500, 200), radius);
-var path3 = new Path.Circle(new Point(500, 200), radius);
+var path1 = new Path.Circle(new Point(0, 0), radius);
+path1.fillColor = 'black';
 
 var candy = new Path.Circle(new Point(100, 100), radius);
 candy.fillColor = 'red';
 
-var elem = [];
-elem.push(path1, path2, path3);
+var elemun = [];
+elemun.push(new Path.Circle(new Point(500, 200), radius), new Path.Circle(new Point(500, 200), radius), new Path.Circle(new Point(500, 200), radius));
+
+var elemde = [];
+elemde.push(new Path.Circle(new Point(500, 200), radius), new Path.Circle(new Point(500, 200), radius), new Path.Circle(new Point(500, 200), radius));
+
 
 // connexion au serveur
 ws.onopen = function (event) 
@@ -53,35 +56,52 @@ ws.onmessage = function (message)
 	switch(msg.type)
 	{
 
-		case "corps" :
-			path.position = msg.pos;
+		case "serpent" :
+			path.position = msg.posun;
+			path1.position = msg.posde;
 			candy.position = msg.poscandy;
 			candy.fillColor.hue += 1;
 			
-			var i = 0;
 
-			if (msg.posqueue.length > elem.length)
+			var i = 0;
+			var j = 0;
+
+			if (msg.posqueueun.length > elemun.length)
 			{
-				elem.push(new Path.Circle(new Point(0, 0), radius));
+				elemun.push(new Path.Circle(new Point(0, 0), radius));
+			}
+			if (msg.posqueuede.length > elemde.length)
+			{
+				elemde.push(new Path.Circle(new Point(0, 0), radius));
 			}
 
 
-			while(i<msg.posqueue.length)
+			while(i<msg.posqueueun.length)
 			{
-				elem[i].fillColor = 'black';
-				elem[i].position = msg.posqueue[i];			
+				elemun[i].fillColor = 'black';
+				elemun[i].position = msg.posqueueun[i];			
 				i++;
 			}
+			while(j<msg.posqueuede.length)
+			{
+				elemde[j].fillColor = 'black';
+				elemde[j].position = msg.posqueuede[j];			
+				j++;
+			}
+			break;
 		
 		case "candy" :
 			candy.position = msg.poscandy; 	
+			break;
 	}
 
 };
-
-ws.onclose = function (event) {      
-  alert("Perdu (u suck), score : "+elem.length);
+/*
+ws.onclose = function (event) {     
+	var score = elemun.length - 3; 
+  	alert("Perdu !!!! score : "+score);
 };
+*/
 
 
 			</script>
