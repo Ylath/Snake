@@ -46,38 +46,40 @@ var WebSocketServer = require('ws').Server,
 	CLIENTS=[];
 
 
-
+// utilisation du model
 var model = require('./model');
-
 var point = model.point;
 var snake = model.snake;
 var game = model.game;
 
-var jeu = new game();
-
+// creation du point candy
 var candypos = new point(Math.random() * 1200, Math.random() * 500);
 
+// création des serpents : direction de départ
 var firstdirec = new point(Math.random() * 1200, Math.random() * 500);
 var firstdirec1 = new point(Math.random() * 1200, Math.random() * 500);
 
+// création des serpents : position de départ
 var postete = new point(500, 300);
 var postete1 = new point(700, 100);
+
+// création des serpents : création du corps
 var poselem = [];
 var poselem1 = [];
+
+// création des serpents : initialisation du corps
 poselem.push(new point(0,0), new point(0,0), new point(0,0));
 poselem1.push(new point(0,0), new point(0,0), new point(0,0));
+
+// création des serpents : initialisation des serpents
 var serp = new snake(postete, poselem);
 var serp1 = new snake(postete1, poselem1);
+
+//création des serpents : initialisation de la direction
 serp.normalize(firstdirec);
 serp1.normalize(firstdirec1);
 
-var radius = 30;
-
-
-var j = 0;
-var i = 0;
-var increPos = 6;
-
+var jeu = new game(candypos);
 
 setInterval(boucle, 50);
 
@@ -93,86 +95,25 @@ function boucle()
 
 function onFrame(ws1, ws2) 
 {		
-	// mise à jour positions tete
+	// mise à jour pour chaque serpent
 	jeu.update();
-
-	// parcours du tableau des snakes du jeu
-	for (var k = 0; k<jeu.snake.length; k++)
-	{
-		
-		// le snake mange un candy
-		var x1 = (candypos.x - jeu.snake[k].tete.x);
-		var y1 = (candypos.y - jeu.snake[k].tete.y);
-		var norme1 = Math.sqrt((x1*x1)+(y1*y1));
-		
-		if (norme1 <= 2*radius)
-		{
-			ajout(jeu.snake[k], ws1, ws2);
-		}
 	
-		// stockage du trajet de la tete
-		jeu.snake[k].postrajetx.push(jeu.snake[k].tete.x);
-		jeu.snake[k].postrajety.push(jeu.snake[k].tete.y);
-	
-
-
-		for (j = 0; j < jeu.snake[k].corps.length; j++) 
-		{
-			//collisions
-			if (j > 0)
-			{
-				var x2 = (jeu.snake[k].corps[j].x - jeu.snake[k].tete.x);
-				var y2 = (jeu.snake[k].corps[j].y - jeu.snake[k].tete.y);
-				var norme2 = Math.sqrt((x2*x2)+(y2*y2));
-				
-				if (norme2 <= radius)
-				{	
-					console.log("THE END");
-					//ws.close();
-				}
-			}
-
-			// les éléments du corps suivent la tete
-			jeu.snake[k].corps[j].x = jeu.snake[k].postrajetx[i - increPos];
-			jeu.snake[k].corps[j].y = jeu.snake[k].postrajety[i - increPos];
-						
-
-			increPos += 6;	
-		}
-	
-		increPos = 6;
-		i++;
-	}
-	
-	//envoi json au client 1 (position élements corps)
+	//envoi json aux clients (position élements corps)
 	var message = { 
 			type : "serpent",
-			posun : jeu.snake[0].tete,
-			posde : jeu.snake[1].tete,
-			posqueueun : jeu.snake[0].corps,
-			posqueuede : jeu.snake[1].corps,
+			posun : serp.tete,
+			posde : serp1.tete,
+			posqueueun : serp.corps,
+			posqueuede : serp1.corps,
 			poscandy : candypos
 	};
 	ws1.send(JSON.stringify(message));
 	ws2.send(JSON.stringify(message));
+	
 }
-
-
-function ajout(serpent, ws1, ws2)
-{
-   	serpent.corps.push(new point(0,0));
-
-   	candypos.x = Math.random() * 1200;
-   	candypos.y = Math.random() * 500;
-   	
- // envoi position candy au client
-	var message = { 
-			type : "candy",
-			poscandy : candypos
-	};
-	ws1.send(JSON.stringify(message));
-	ws2.send(JSON.stringify(message));
-}
+	
+	// faire classe game => candy + tab[snake]
+	// tab => gérer collisions entre les snake
 
 
 
@@ -180,15 +121,15 @@ wss.on('connection', function connection(ws)
 {
 	console.log("Client connected");
 	CLIENTS.push(ws);
-	if (jeu.snake.length < 1)
+	if (CLIENTS.length < 2)
 	{
+		jeu.snakes.push(serp);
 		console.log("Player 1 enter the game");
-		jeu.snake.push(serp);
 	}
 	else 
 	{
+		jeu.snakes.push(serp1);
 		console.log("Player 2 enter the game");
-		jeu.snake.push(serp1);
 	}
 	
 
@@ -202,11 +143,11 @@ wss.on('connection', function connection(ws)
 			case "clic" :
 				if (ws == CLIENTS[0])
 				{
-					jeu.snake[0].normalize(new point(msg.posx, msg.posy));
+					serp.normalize(new point(msg.posx, msg.posy));
 				}
 				if (ws == CLIENTS[1])
 				{
-					jeu.snake[1].normalize(new point(msg.posx, msg.posy));
+					serp1.normalize(new point(msg.posx, msg.posy));
 				}
 				break;
 		}						
