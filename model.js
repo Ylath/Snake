@@ -19,6 +19,7 @@ function point (x, y) {
 function snake (tete, corps) {
 	this.tete = tete;
 	this.corps = corps;
+	this.touch = 0;
 	this.i = 0;
 	this.postrajetx = [1000];
 	this.postrajety = [1000];
@@ -96,10 +97,12 @@ function game (candypos) {
 					// cas ou le snake compare la position de SA tete avec celle de SON corps
 					if (k == l)
 					{
-						if (norme(this.snakes[k].corps[j], this.snakes[l].tete) <= radius)
-						{	
-							console.log("THAT ENDING !");
-							//ws.close();
+						if (j>0)
+						{
+							if (norme(this.snakes[k].corps[j], this.snakes[l].tete) <= radius)
+							{	
+								this.snakes[k].touch = 1;
+							}
 						}
 					}
 					
@@ -108,8 +111,7 @@ function game (candypos) {
 					{
 						if (norme(this.snakes[k].corps[j], this.snakes[l].tete) <= 2*radius)
 						{	
-							console.log("THAT ENDING, you suck!");
-							//ws.close();
+							this.snakes[l].touch = 1;
 						}
 					}
 				}				

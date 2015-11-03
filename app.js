@@ -80,8 +80,9 @@ serp.normalize(firstdirec);
 serp1.normalize(firstdirec1);
 
 var jeu = new game(candypos);
+var end = false;
 
-setInterval(boucle, 50);
+setInterval(boucle, 25);
 
 function boucle() 
 {
@@ -95,8 +96,32 @@ function boucle()
 
 function onFrame(ws1, ws2) 
 {		
-	// mise à jour pour chaque serpent
+	// si le jeu est fini : je ferme les connexions
+	if (end)
+	{
+		ws1.close();
+		ws2.close();
+	}
+	
+	// mise à jour du jeu
 	jeu.update();
+	
+	// vérification si ya eu des collisions
+	if (!end)
+	{
+		// si le joueur 1 a effectué une collision
+		if (serp.touch == 1)
+		{
+			end = true;
+			finish (serp1, serp, ws2, ws1);
+		}
+		// si le joueur 2 a effectué une collision
+		else if (serp1.touch == 1)
+		{
+			end = true;
+			finish (serp, serp1, ws1, ws2);
+		}
+	}
 	
 	//envoi json aux clients (position élements corps)
 	var message = { 
@@ -109,11 +134,25 @@ function onFrame(ws1, ws2)
 	};
 	ws1.send(JSON.stringify(message));
 	ws2.send(JSON.stringify(message));
-	
 }
-	
-	// faire classe game => candy + tab[snake]
-	// tab => gérer collisions entre les snake
+
+// fonction qui envoi les messages de victoire (ou de défaite) aux clients
+// snake1/ws1 = victoire
+// snake2/ws2 = défaite
+function finish (snake1, snake2, ws1, ws2) 
+{
+	var winmessage = { 
+			type : "gagné",
+			score : snake1.corps.length
+	};
+	var lostmessage = { 
+			type : "perdu",
+			score : snake2.corps.length
+	};
+	ws1.send(JSON.stringify(winmessage));
+	ws2.send(JSON.stringify(lostmessage));
+}
+
 
 
 

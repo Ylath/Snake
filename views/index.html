@@ -26,6 +26,7 @@ elemun.push(new Path.Circle(new Point(500, 200), radius), new Path.Circle(new Po
 var elemde = [];
 elemde.push(new Path.Circle(new Point(500, 200), radius), new Path.Circle(new Point(500, 200), radius), new Path.Circle(new Point(500, 200), radius));
 
+var end = false;
 
 // connexion au serveur
 ws.onopen = function (event) 
@@ -93,15 +94,24 @@ ws.onmessage = function (message)
 		case "candy" :
 			candy.position = msg.poscandy; 	
 			break;
+
+	
+		case "gagné" :
+			var score = msg.score; 
+  			alert("Gagné !!!! score : "+score);
+			break;
+				
+
+		case "perdu" :
+			var score = msg.score; 
+  			alert("Perdu !!!! score : "+score);
+			break;
 	}
 
 };
-/*
-ws.onclose = function (event) {     
-	var score = elemun.length - 3; 
-  	alert("Perdu !!!! score : "+score);
-};
-*/
+
+
+
 
 
 			</script>
