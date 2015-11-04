@@ -7,15 +7,16 @@
 			<script type="text/javascript" src="Paper/docs/assets/js/paper.js"></script>
 			<!-- Define inlined PaperScript associate it with myCanvas -->
 			<script type="text/paperscript" canvas="myCanvas">
-	
-var ws = new WebSocket("wss://localhost:4710/");
+myCanvas.style.border = "black 1px solid";
+var host = window.location.host;
+var ws = new WebSocket('wss://'+host);
 
-var radius = 30;
+var radius = 20;
 var path = new Path.Circle(new Point(0, 0), radius);
-path.fillColor = 'black';
+path.fillColor = 'red';
 
 var path1 = new Path.Circle(new Point(0, 0), radius);
-path1.fillColor = 'black';
+path1.fillColor = 'blue';
 
 var candy = new Path.Circle(new Point(100, 100), radius);
 candy.fillColor = 'red';
@@ -109,14 +110,9 @@ ws.onmessage = function (message)
 	}
 
 };
-
-
-
-
-
 			</script>
 	</head>
 	<body>
-		<canvas id="myCanvas" width=1200 height=500></canvas>
+		<canvas id="myCanvas" width=1200 height=500></canvas>		
 	</body>
 </html>

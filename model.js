@@ -6,10 +6,10 @@ module.exports.point = point;
 module.exports.snake = snake;
 module.exports.game = game;
 
-var radius = 30;
+var radius = 20;
 
 var j = 0;
-var increPos = 6;
+var increPos = 5;
 
 function point (x, y) {
 	this.x = x;
@@ -26,6 +26,7 @@ function snake (tete, corps) {
 
 	this.normalize = function(pt) 
 	{
+		// modification de la direction
 		var x = (pt.x - this.tete.x);
 		var y = (pt.y - this.tete.y);
 		var norme = Math.sqrt((x*x)+(y*y));
@@ -35,9 +36,12 @@ function snake (tete, corps) {
 	
 	this.update = function() 
 	{
-		// déplacement de la tetes
+		// déplacement de la tete
 		this.tete.x += this.deplax;
 		this.tete.y += this.deplay;
+		
+		// passer a travers les murs
+		transfert(this.tete);
 		
 		// stockage du trajet de la tete
 		this.postrajetx.push(this.tete.x);
@@ -50,10 +54,10 @@ function snake (tete, corps) {
 			this.corps[j].x = this.postrajetx[this.i - increPos];
 			this.corps[j].y = this.postrajety[this.i - increPos];	
 
-			increPos += 6;	
+			increPos += 5;	
 		}
 		
-		increPos = 6;
+		increPos = 5;
 		this.i++;
 	};
 	
@@ -66,6 +70,26 @@ function norme(elemA, elemB)
 	var x = (elemA.x - elemB.x);
 	var y = (elemA.y - elemB.y);
 	return Math.sqrt((x*x)+(y*y));
+}
+
+function transfert(pt)
+{
+	if (pt.x < 0)
+	{
+		pt.x = 1200;
+	}
+	if (pt.x > 1200)
+	{
+		pt.x = 1;
+	}
+	if (pt.y < 0)
+	{
+		pt.y = 500;
+	}
+	if (pt.y > 500)
+	{
+		pt.y = 1;
+	}
 }
 
 

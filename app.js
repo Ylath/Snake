@@ -79,10 +79,12 @@ var serp1 = new snake(postete1, poselem1);
 serp.normalize(firstdirec);
 serp1.normalize(firstdirec1);
 
+// initialisation du jeu
 var jeu = new game(candypos);
 var end = false;
 
-setInterval(boucle, 25);
+// lancement du jeu
+setInterval(boucle, 20);
 
 function boucle() 
 {
@@ -182,10 +184,12 @@ wss.on('connection', function connection(ws)
 			case "clic" :
 				if (ws == CLIENTS[0])
 				{
+					// modification de la direction (suite au clic) du serpent 1
 					serp.normalize(new point(msg.posx, msg.posy));
 				}
 				if (ws == CLIENTS[1])
 				{
+					// modification de la direction (suite au clic) du serpent 2
 					serp1.normalize(new point(msg.posx, msg.posy));
 				}
 				break;
